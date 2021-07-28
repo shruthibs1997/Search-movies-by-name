@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>search movie by name</title>
+    <style>
+        #page {
+            background-color: black;
+        }
+
+        #slide {
+            width: 100%;
+            height: 300px;
+            text-align: center;
+        }
+
+        #slide>img {
+            width: 70%;
+            height: 300px;
+        }
+
+        #heading {
+            text-align: center;
+            font-size: 2rem;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            margin-top: 20px;
+            color: whitesmoke;
+        }
+
+        #name {
+            width: 15%;
+            height: 30px;
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+            margin-left: 39%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        #btn {
+            width: 6%;
+            height: 36px;
+            font-size: 1.3rem;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            border: none;
+            background-color: gray;
+        }
+
+        .display {
+            width: 25%;
+            height: 600px;
+            background-color: rgb(238, 212, 212);
+            margin: auto;
+            border-radius: 10px;
+            padding: 1%;
+            position: relative;
+        }
+
+        .image1 {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+        }
+
+        #display>div {
+            margin: 5px;
+            font-size: 1.3rem;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .image2 {
+            width: 35%;
+            height: 60px;
+            position: absolute;
+            bottom: 2%;
+            left: 50%;
+        }
+    </style>
+</head>
+
+<body id="page">
+    <div id="slide"></div>
+    <div id="heading">Search Movie By Name</div>
+    <input type="text" id="name">
+    <button onclick="search()" id="btn">Search</button>
+    <div id="display"></div>
+</body>
+
+</html>
+<script>
+    function slideimg() {
+        var arr = ['https://wallpaperaccess.com/full/1923020.jpg', 'https://wallpaperaccess.com/full/2330954.jpg', 'https://i0.wp.com/photos.tfpc.in/wp-content/gallery/maharshi-movie-hd-posters/maharshi-movie-posters-2.jpg', 'https://i.pinimg.com/originals/f0/e9/99/f0e999bf1e376a0148501e7e0b3e32c0.jpg', 'https://www.wallpapertip.com/wmimgs/30-301133_movie-hd-wallpapers-1080p-hd-wallpapers-1080p-hollywood.jpg']
+        let div = document.getElementById('slide');
+        let image = document.createElement('img');
+        image.src = arr[0];
+        div.append(image);
+        var i = 1;
+        setInterval(function () {
+            if (i == arr.length) {
+                i = 0;
+            } else {
+                image.src = arr[i];
+                i++;
+            }
+        }, 3000)
+    }
+    slideimg()
+    async function search() {
+        let name = document.getElementById('name').value;
+        let div_dis = document.getElementById('display');
+        div_dis.setAttribute('class', 'display')
+        let Mtitle = document.createElement('div');
+        let Myear = document.createElement('div');
+        let Mdate = document.createElement('div');
+        let Mimg = document.createElement('img');
+        Mimg.setAttribute('class', "image1")
+        let Mrating = document.createElement('div');
+        let Mimdb = document.createElement('div');
+        try {
+            let res = await fetch(`http://www.omdbapi.com/?t=${name}&apikey=dedca72a`);
+            let data = await res.json();
+            div_dis.innerHTML = null;
+            if (data.Title == undefined) {
+                Mimg.src = 'https://cdn3.vectorstock.com/i/1000x1000/50/07/http-404-not-found-error-message-hypertext-vector-20025007.jpg';
+                div_dis.append(Mimg)
+            } else {
+                Mtitle.innerHTML = `<b>Title:<b> ${data.Title}`;
+                Myear.innerHTML = `<b>Year:<b> ${data.Year}`;
+                Mdate.innerHTML = `<b>Realeased Date:<b> ${data.Released}`;
+                Mimg.src = data.Poster;
+                Mrating.innerHTML = `<b>Rating:<b> ${data.Ratings[0].Value}`;
+                Mimdb.innerHTML = `<b>IMDB:<b> ${data.imdbRating}`;
+                div_dis.append(Mimg, Mtitle, Myear, Mdate, Mrating, Mimdb);
+                if (data.imdbRating > 8) {
+                    var tag = document.createElement('img');
+                    tag.src = 'https://cdn2.vectorstock.com/i/thumb-large/01/21/red-banner-recommended-with-thumbs-up-transparent-vector-33420121.jpg';
+                    tag.setAttribute('class', 'image2')
+                    div_dis.append(tag)
+                }
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+//search()
+</script>
